@@ -33,7 +33,8 @@ param(
     [string]$ShortcutName,
     [switch]$Remove,
     [string]$RemoveTaskName,
-    [switch]$List
+    [switch]$List,
+    [switch]$Gui
 )
 
 $ErrorActionPreference = "Stop"
@@ -417,6 +418,10 @@ function Show-GUI {
 # ============================================================
 
 function Invoke-CommandLine {
+    if ($Gui) {
+        Show-GUI
+        return
+    }
     if ($List) {
         Write-Host ''
         Write-Host '===== Existing Silent Tasks =====' -ForegroundColor Cyan
@@ -492,7 +497,7 @@ function Invoke-CommandLine {
 # ============================================================
 
 # On first run, check if running from console or should launch GUI
-if ($Host.Name -match 'Console' -and (-not $TargetPath) -and (-not $List) -and (-not $Remove)) {
+if ($Host.Name -match 'Console' -and (-not $TargetPath) -and (-not $List) -and (-not $Remove) -and (-not $Gui)) {
     # No params in console: launch GUI in new window to avoid blocking
     Start-Process -FilePath PowerShell.exe `
         -ArgumentList "-NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File ""$PSCommandPath"" -Gui" `
